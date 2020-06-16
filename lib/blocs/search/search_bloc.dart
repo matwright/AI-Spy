@@ -49,6 +49,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   }
 
   Stream<SearchClueState> _mapImageSelectedEventToState(ImageSelectedEvent event) async* {
+    await new Future.delayed(const Duration(seconds : 3));
     print("***SearchClueState***");
     print(spiedModel.word.toString());
     String clue="I spy with my little eye something beginning with "+spiedModel.word.toString().substring(0,1);

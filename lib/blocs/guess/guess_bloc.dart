@@ -30,6 +30,7 @@ class GuessBloc extends Bloc<GuessEvent, GuessState> {
   @override
   GuessState get initialState => InitialGuessState();
   int numTries=0;
+  int maxTries=5;
   SpiedModel spiedModel;
   String guessWord;
 
@@ -46,27 +47,67 @@ class GuessBloc extends Bloc<GuessEvent, GuessState> {
       print("StartVoiceGuessEvent!!!");
       yield* _mapStartVoiceGuessEventToState(event);
     }else  if(event is VoiceProcessedEvent){
+      await new Future.delayed(const Duration(seconds : 1));
+      FlutterTts flutterTts = FlutterTts();
+      await flutterTts.setSpeechRate(0.8);
       print("VoiceProcessedEvent!!!");
-      yield VoiceProcessedState(guessWord, spiedModel, numTries);
+      String clue;
+      print('***GUESS*** '+guessWord);
+      print('***SPIED*** '+spiedModel.word);
+      if(guessWord.toLowerCase().replaceAll(' ', '')==spiedModel.word.toLowerCase().replaceAll(' ', '')){
+        clue="Hurray! Well done. You guessed correctly! Human wins";
+        flutterTts.speak(clue);
+        yield GameOverState(true, spiedModel, numTries);
+      }else if(numTries==maxTries){
+
+        clue="No! Sorry, That's not correct. You've used up all your ten turns. AI is the winner.";
+        flutterTts.speak(clue);
+        yield GameOverState(false, spiedModel, numTries);
+      }else{
+        List answersList=[
+          "No! Sorry, That's not correct. Have another go.",
+          "Wrong! Come on you can do better than this. Third time lucky maybe.",
+          "Incorrect. Oh dear you are not very good at this. And to think I was created by your kind.",
+          "Still wrong. Is your neural network operational?"
+
+        ];
+        Map answers=answersList.asMap();
+        flutterTts.speak(answers[numTries-1]);
+        yield VoiceProcessedState(guessWord, spiedModel, numTries);
+      }
+
+
+
+
+
     }else  if(event is VoiceErrorEvent){
-      print("VoiceErrorEvent!!!");
-      yield* _mapStartVoiceErrorEventToState(event);
 
-
+yield *_mapStartVoiceErrorEventToState(event);
     }
 
 
   }
 
+
+
   Stream<GuessState> _mapStartVoiceErrorEventToState(VoiceErrorEvent event) async* {
     String clue="Sorry, I did not understand. Please try again.";
     FlutterTts flutterTts = FlutterTts();
     await flutterTts.speak(clue);
-    yield VoiceGuessState(spiedModel,numTries);
+    yield VoiceProcessedState(guessWord, spiedModel, numTries);
   }
 
 
   Stream<GuessState> _mapStartVoiceGuessEventToState(VoiceGuessEvent event) async* {
+    if(numTries==0){
+      String clue="OK, tell me your answer after the bleep.";
+      FlutterTts flutterTts = FlutterTts();
+      await flutterTts.speak(clue);
+      await new Future.delayed(const Duration(seconds : 3));
+    }
+
+
+
     print("***START LISTENING***");
     SpeechToText speech = SpeechToText();
     bool available = await speech.initialize( onStatus: statusListener, onError: errorListener );
@@ -84,8 +125,9 @@ class GuessBloc extends Bloc<GuessEvent, GuessState> {
   }
 
   void resultListener(SpeechRecognitionResult result) {
-    print("${result.recognizedWords} - ${result.finalResult}");
-    if(result.finalResult){
+
+    if(result.finalResult==true){
+      print("${result.recognizedWords} - ${result.finalResult}");
       guessWord=result.recognizedWords;
       numTries++;
       changeController.add(new CapturedEvent('spokenword'));

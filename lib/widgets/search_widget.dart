@@ -21,10 +21,9 @@ class SearchWidget extends StatelessWidget {
       builder: (context, state) {
 
         if (state is SearchLoadedState ) {
-          return AspectRatio(
-              aspectRatio:
-              state.cameraController.value.aspectRatio,
-              child: CameraPreview(state.cameraController));
+          return
+            Expanded(child:CameraPreview(state.cameraController));
+
 
       }else if(state is SearchClueState){
           return Text('start guessing');

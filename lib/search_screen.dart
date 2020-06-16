@@ -36,19 +36,11 @@ class SearchScreen extends StatelessWidget {
 
         return Scaffold(
 
-              floatingActionButton: FloatingActionButton(
-                heroTag: "addKid",
-                onPressed: () async {
 
-                },
-                child: Icon(Icons.add),
-                tooltip: 'new search',
-              )
-              ,
               body:
               Column(
                 children: <Widget>[
-                  Text('Search'),
+
                   SearchWidget()
                 ],
               )

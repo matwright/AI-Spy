@@ -1,12 +1,16 @@
 import 'dart:ui';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/widgets.dart';
 
 class SpiedModel{
   CameraImage cameraImage;
-  Object rect;
+  Map rect;
   String word;
-  SpiedModel(this.cameraImage,this.rect,this.word);
+  var aspectRatio;
+  List<dynamic> finalImage;
+  SpiedModel(this.cameraImage,this.rect,this.word,this.finalImage,this.aspectRatio);
+
 
 
 }

@@ -4,11 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ispy/blocs/camera/bloc.dart';
 import 'package:ispy/blocs/guess/bloc.dart';
 import 'package:ispy/blocs/search/search_bloc.dart';
-import 'package:ispy/blocs/search/search_event.dart';
 import 'package:ispy/blocs/nav/bloc.dart';
 import 'package:ispy/guess_screen.dart';
 import 'package:ispy/search_screen.dart';
-import 'package:ispy/widgets/appbar_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   final String name;
@@ -24,21 +22,11 @@ class HomeScreen extends StatelessWidget {
       BlocBuilder<NavBloc, NavState>(
           builder: (_,state){
             return Scaffold(
-
+              appBar: AppBar(title: Text('iSPY v.1.0.beta'),backgroundColor: Color.fromRGBO(45, 92, 110,1),),
+extendBodyBehindAppBar: false,
                 body:
 
-                NestedScrollView(
-                    headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-                      return <Widget>[
-                        AppBarWidget(
-                          title: null,
-                          iconData: state.iconData,
-                        ),
-
-                      ];
-                    },
-                    body:_body(state,context)
-                )
+                _body(state,context)
             );
           }
       );
@@ -49,7 +37,30 @@ class HomeScreen extends StatelessWidget {
 _body(NavState state,BuildContext context){
   if(state is InitialNavState || state is HomeNavState){
 
-    return FlatButton(onPressed:   ()=>BlocProvider.of<NavBloc>(context).add(NavPlayEvent()), child: Text('Start Search'));
+    return Column(
+      children: <Widget>[
+        Padding(padding: EdgeInsets.all(20)),
+        Image(image:AssetImage('assets/logo.png') ),
+        Padding(padding: EdgeInsets.all(20)),
+  ButtonTheme(
+  minWidth: 200.0,
+  height: 50.0,
+      buttonColor: Color.fromRGBO(67, 132, 165,1),
+  shape:  RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(10.0),
+  side: BorderSide(width: 1.00,color: Color.fromRGBO(45, 92, 110,1)))
+  ,
+textTheme: ButtonTextTheme.primary,
+      child:
+        RaisedButton(
+
+            onPressed:   ()=>BlocProvider.of<NavBloc>(context).add(NavPlayEvent()), child: Text('Start Search'))
+  )
+
+  ],
+    );
+
+
 
   }else if(state is PlayNavState){
     return      BlocProvider<SearchBloc>(

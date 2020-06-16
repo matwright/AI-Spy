@@ -27,3 +27,12 @@ class VoiceProcessedState extends GuessState {
 
   VoiceProcessedState(this.guessWord,this.spiedModel,this.numTries);
 }
+
+class GameOverState extends GuessState {
+
+  final bool success;
+  final SpiedModel spiedModel;
+  final int numTries;
+
+  GameOverState(this.success,this.spiedModel,this.numTries);
+}

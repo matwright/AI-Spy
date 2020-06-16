@@ -7,15 +7,15 @@ class SpinnerWidget extends StatelessWidget {
 
 
   SpinnerWidget({
-    this.size=200.0,
+    this.size=600.0,
     Key key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
 
-    return SpinKitFadingFour(
-      color:Theme.of(context).primaryColor,
+    return SpinKitRipple(
+      color:Color.fromRGBO(45, 92, 110,1),
       size: size,
     );
   }

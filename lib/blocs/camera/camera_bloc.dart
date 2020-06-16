@@ -1,10 +1,11 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:ispy/data/spied_model.dart';
 import 'package:tflite/tflite.dart';
-
+import 'package:image/image.dart' as imglib;
 import './bloc.dart';
 
 class CameraBloc extends Bloc<CameraEvent, CameraState> {
@@ -15,7 +16,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         //Tflite.close();
         if(this.controller.value.isStreamingImages){
           this.controller.stopImageStream();
-          //this.controller.dispose();
+          this.controller.dispose();
         }
         this.imageCaptured = true;
         this.add(CameraStoppedEvent());
@@ -36,6 +37,38 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   int i = 0;
   SpiedModel spiedModel;
 
+ Future<List> convertYUV420toImage(CameraImage image) async {
+
+    try {
+      final int width = image.width;
+      final int height = image.height;
+
+
+
+      var img = imglib.Image(width, height); // Create Image buffer
+
+      // Fill image buffer with plane[0] from YUV420_888
+      for(int x=0; x < width; x++) {
+        for(int y=0; y < height; y++) {
+          final pixelColor = image.planes[0].bytes[y * width + x];
+          // color: 0x FF  FF  FF  FF
+          //           A   B   G   R
+          // Calculate pixel color
+          img.data[y * width + x] = (0xFF << 24) | (pixelColor << 16) | (pixelColor << 8) | pixelColor;
+        }
+      }
+
+      imglib.PngEncoder pngEncoder = new imglib.PngEncoder(level: 0, filter: 0);
+      List<int> png = pngEncoder.encodeImage(img);
+      return png;
+    } catch (e) {
+      print("ERROR:" + e.toString());
+    }
+    return null;
+  }
+
+
+
   @override
   Stream<CameraState> mapEventToState(
     CameraEvent event,
@@ -51,6 +84,21 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           );
     }
     if (event is StartCameraEvent) {
+      FlutterTts flutterTts = FlutterTts();
+
+      print('voices');
+      await flutterTts.setSpeechRate(0.8);
+
+     String text="Initialising neural network";
+     await  flutterTts.speak(text);
+
+
+      await new Future.delayed(const Duration(seconds : 3));
+
+
+      String text2="Please allow me to scan our environment";
+      await flutterTts.speak(text2);
+
       yield* _mapStartCameraEventToState();
     } else if (event is CameraStoppedEvent) {
       yield ImageCapturedState(spiedModel);
@@ -61,7 +109,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     double tmpHighestRating=0.0;
     CameraImage tmpImg;
     var tmpElement;
-    recognitions.forEach((element) {
+    await  Future.forEach(recognitions,(element) async {
       print('***HIGHEST***' + element["confidenceInClass"].toString());
       if (element["confidenceInClass"] > tmpHighestRating) {
         tmpHighestRating=element["confidenceInClass"];
@@ -71,7 +119,10 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     });
 
     highestRating = tmpHighestRating;
-    spiedModel=new SpiedModel(tmpImg, tmpElement["rect"], tmpElement['detectedClass']);
+    List<dynamic> finalImage= await convertYUV420toImage(tmpImg);
+
+    spiedModel=new SpiedModel(tmpImg, tmpElement["rect"], tmpElement['detectedClass'],finalImage,controller.value.aspectRatio);
+
     return;
   }
 
@@ -86,7 +137,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       await controller.initialize();
       print('***START STREAM***');
       await controller.startImageStream(processImage);
+
     }
+
     yield CameraStartedState(controller);
   }
 
@@ -94,7 +147,10 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     if (this.imageCaptured == true) {
       return;
     }
-    if (i % 60 == 0) {
+
+
+    //skip first 300 frames (5 secs)
+    if (i>300 && i % 60 == 0) {
       print('***LIST REC***');
       List recognitions = [];
       recognitions = await Tflite.detectObjectOnFrame(
@@ -107,7 +163,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         imageMean: 0,
         imageStd: 255.0,
         numResultsPerClass: 1,
-        threshold: 0.5,
+        threshold: 0.6,
       );
 
       //processing=false;
@@ -116,7 +172,11 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         print('***MATCH***' + recognitions.length.toString());
         await processRecognitions(recognitions, img);
         print('***imageCaptured***');
-        changeController.add(new CapturedEvent('captured'));
+        if(imageCaptured==false){
+
+          changeController.add(new CapturedEvent('captured'));
+        }
+
         imageCaptured = true;
         return;
       }
