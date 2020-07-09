@@ -47,7 +47,7 @@ class GuessBloc extends Bloc<GuessEvent, GuessState> {
       print("StartVoiceGuessEvent!!!");
       yield* _mapStartVoiceGuessEventToState(event);
     }else  if(event is VoiceProcessedEvent){
-      await new Future.delayed(const Duration(seconds : 1));
+      await new Future.delayed(const Duration(seconds : 3));
       FlutterTts flutterTts = FlutterTts();
       await flutterTts.setSpeechRate(0.8);
       print("VoiceProcessedEvent!!!");
@@ -91,6 +91,7 @@ yield *_mapStartVoiceErrorEventToState(event);
 
 
   Stream<GuessState> _mapStartVoiceErrorEventToState(VoiceErrorEvent event) async* {
+
     String clue="Sorry, I did not understand. Please try again.";
     FlutterTts flutterTts = FlutterTts();
     await flutterTts.speak(clue);
