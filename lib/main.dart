@@ -13,8 +13,7 @@ import 'package:ispy/theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  BlocSupervisor.delegate = MyBlocDelegate();
-
+  Bloc.observer = MyBlocDelegate();
   runApp(
     BlocProvider(
       create: (context) => SearchBloc(CameraBloc())

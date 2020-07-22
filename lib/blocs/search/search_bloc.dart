@@ -11,11 +11,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   StreamSubscription cameraBlocSubscription;
   CameraController cameraController;
   SpiedModel spiedModel;
-  SearchBloc(this.cameraBloc){
+  SearchBloc(this.cameraBloc):super(InitialSearchState()){
     cameraBlocSubscription = cameraBloc.listen((state) {
       // React to state changes here.
       // Add events here to trigger changes in MyBloc.
-      print('STATE***'+state.toString());
+      print('***STATE*** '+state.toString());
       if(state is CameraStartedState){
         cameraController=state.controller;
         this.add(LoadSearchEvent());
@@ -35,8 +35,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     cameraBlocSubscription.cancel();
     return super.close();
   }
-  @override
-  SearchState get initialState => InitialSearchState();
+
 
   @override
   Stream<SearchState> mapEventToState(SearchEvent event,) async* {

@@ -23,47 +23,31 @@ class ImageMatchWidget extends StatelessWidget {
     print(spiedModel.aspectRatio);
     return
 new Column(
-  children: <Widget>[
-  Text(
-  spiedModel.word,
-  style    : new TextStyle(
-      color: Colors.white,
-
-      fontWeight: FontWeight.bold,
-      fontSize: 40),
-),
-Stack(alignment: FractionalOffset.center, children: <Widget>[
-
-
-  RotatedBox(quarterTurns: 1, child:
-Stack(
+    mainAxisSize: MainAxisSize.max,
+  mainAxisAlignment: MainAxisAlignment.start,
   children: <Widget>[
 
-    new AspectRatio(
-        key: _keyCameraPreview,
-        aspectRatio: spiedModel.aspectRatio+1,
-        child:Image(image:  MemoryImage(spiedModel.finalImage),fit: BoxFit.contain,)),
+    Stack(alignment: FractionalOffset.center, children: <Widget>[
+      RotatedBox(quarterTurns: 1, child:
+      new AspectRatio(
+          key: _keyCameraPreview,
+          aspectRatio: 1,
+          child:Image(image:  MemoryImage(spiedModel.finalImage),fit: BoxFit.contain,)),
+      )
+      ,
+
+      Positioned.fill(
+          child: new CustomPaint(
+            size: Size.infinite,
+            painter: ProfileCardPainter(spiedModel),
+          ))
+      ,
+
+    ]
 
 
 
-  ],
-),
-
-
-)
-  ,
-  Positioned.fill(
-      child: new CustomPaint(
-        size: Size.infinite,
-        painter: ProfileCardPainter(spiedModel),
-      ))
-,
-
-]
-
-
-
-    ),
+    )
 
 
 

@@ -10,7 +10,7 @@ import './bloc.dart';
 
 class GuessBloc extends Bloc<GuessEvent, GuessState> {
 
-  GuessBloc(this.spiedModel) {
+  GuessBloc(this.spiedModel):super(InitialGuessState()) {
     this.onChange.listen((e) {
       if ((e.eventData) == 'spokenword') {
         print('***SPOKEN WORD PROCESSING***');
@@ -27,8 +27,7 @@ class GuessBloc extends Bloc<GuessEvent, GuessState> {
   var changeController = new StreamController<CapturedEvent>();
 
   Stream<CapturedEvent> get onChange => changeController.stream;
-  @override
-  GuessState get initialState => InitialGuessState();
+
   int numTries=0;
   int maxTries=5;
   SpiedModel spiedModel;
@@ -60,7 +59,7 @@ class GuessBloc extends Bloc<GuessEvent, GuessState> {
         yield GameOverState(true, spiedModel, numTries);
       }else if(numTries==maxTries){
 
-        clue="No! Sorry, That's not correct. You've used up all your ten turns. AI is the winner.";
+        clue="No! Sorry, That's not correct. You've used up all your five turns. AI is the winner.";
         flutterTts.speak(clue);
         yield GameOverState(false, spiedModel, numTries);
       }else{

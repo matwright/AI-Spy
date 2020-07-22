@@ -10,12 +10,8 @@ class NavBloc extends Bloc<NavEvent, NavState> {
 
 
 
-  @override
-  NavState get  initialState {
 
-    return InitialNavState();
-
-  }
+  NavBloc():super(InitialNavState());
 
   @override
   Stream<NavState> mapEventToState(

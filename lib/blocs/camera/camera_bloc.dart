@@ -2,22 +2,19 @@ import 'dart:async';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:ispy/data/spied_model.dart';
 import 'package:tflite/tflite.dart';
 import 'package:image/image.dart' as imglib;
+import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 import './bloc.dart';
 
 class CameraBloc extends Bloc<CameraEvent, CameraState> {
-  CameraBloc() {
+  CameraBloc():super(InitialCameraState()) {
     this.onChange.listen((e) {
-      if ((e.eventData) == 'captured') {
-        print('***CLSOE IT***');
-        //Tflite.close();
-        if(this.controller.value.isStreamingImages){
-          this.controller.stopImageStream();
-          this.controller.dispose();
-        }
+      if ((e.eventData) == 'captured' && this.imageCaptured==false) {
+
         this.imageCaptured = true;
         this.add(CameraStoppedEvent());
       }
@@ -27,10 +24,11 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   var changeController = new StreamController<CapturedEvent>();
 
   Stream<CapturedEvent> get onChange => changeController.stream;
-  CameraState get initialState => InitialCameraState();
+
   List<CameraDescription> cameras;
-  CameraController controller;
-  bool processing = false;
+  CameraController cameraController;
+  bool isProcessingStream = false;
+  bool isProcessingFrame = false;
   bool model = false;
   double highestRating = 0;
   bool imageCaptured = false;
@@ -62,7 +60,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       List<int> png = pngEncoder.encodeImage(img);
       return png;
     } catch (e) {
-      print("ERROR:" + e.toString());
+      print("#65 ERROR:" + e.toString());
     }
     return null;
   }
@@ -76,9 +74,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     if (!model) {
       model = true;
       await Tflite.loadModel(
-          model: "assets/yolov2_tiny.tflite",
-          labels: "assets/yolov2_tiny.txt",
-          numThreads: 1, // defaults to 1
+          model: "assets/detect.tflite",
+          labels: "assets/labelmap.txt",
+          numThreads: 2, // defaults to 1
           isAsset:
               true // defaults to true, set to false to load resources outside assets
           );
@@ -121,26 +119,27 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     highestRating = tmpHighestRating;
     List<dynamic> finalImage= await convertYUV420toImage(tmpImg);
 
-    spiedModel=new SpiedModel(tmpImg, tmpElement["rect"], tmpElement['detectedClass'],finalImage,controller.value.aspectRatio);
+    spiedModel=new SpiedModel(tmpImg, tmpElement["rect"], tmpElement['detectedClass'],finalImage,cameraController.value.aspectRatio);
 
     return;
   }
 
   Stream<CameraState> _mapStartCameraEventToState() async* {
-    print('***PROCESSING***' + processing.toString());
-    if (processing == false) {
-      //controller == null || !controller.value.isInitialized
-      processing = true;
+    print('***isProcessingStream***' + isProcessingStream.toString());
+    if (isProcessingStream == false) {
+      //cameraController == null || !cameraController.value.isInitialized
+      isProcessingStream = true;
       cameras = await availableCameras();
-      controller = CameraController(cameras[0], ResolutionPreset.high,
-          enableAudio: false);
-      await controller.initialize();
+      cameraController = CameraController(cameras[0], ResolutionPreset.low,
+          enableAudio: false,);
+
+      await cameraController.initialize();
       print('***START STREAM***');
-      await controller.startImageStream(processImage);
+      await cameraController.startImageStream(processImage);
 
     }
 
-    yield CameraStartedState(controller);
+    yield CameraStartedState(cameraController);
   }
 
   processImage(CameraImage img) async {
@@ -149,35 +148,56 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     }
 
 
-    //skip first 300 frames (5 secs)
-    if (i>300 && i % 60 == 0) {
+
+    if (i>10 && isProcessingFrame== false && imageCaptured==false) {
       print('***LIST REC***');
       List recognitions = [];
-      recognitions = await Tflite.detectObjectOnFrame(
-        bytesList: img.planes.map((plane) {
-          return plane.bytes;
-        }).toList(),
-        model: "YOLO",
-        imageHeight: img.height,
-        imageWidth: img.width,
-        imageMean: 0,
-        imageStd: 255.0,
-        numResultsPerClass: 1,
-        threshold: 0.6,
-      );
+      isProcessingFrame = true;
+     List imageBytes= img.planes.map((plane) {
+        return plane.bytes;
+      }).toList();
+      try {
 
-      //processing=false;
+        recognitions = await Tflite.detectObjectOnFrame(
+          bytesList:imageBytes,
+          model: "SSDMobileNet",
+          imageHeight: img.height,
+          imageWidth: img.width,
+          imageMean: 0,
+          imageStd: 255.0,
+          numResultsPerClass: 1,
+          asynch: true,
+          threshold: 0.5
+        );
+
+        isProcessingFrame = false;
+
+      }on PlatformException catch(e) {
+        print("if Tflite still busy from previous request, continue");
+        print(e);
+        isProcessingFrame=false;
+        return;
+    }
+
+      //isProcessingStream=false;
       print('***recognitions***' + recognitions.length.toString());
       if (recognitions.length > 0) {
         print('***MATCH***' + recognitions.length.toString());
+
         await processRecognitions(recognitions, img);
         print('***imageCaptured***');
-        if(imageCaptured==false){
 
+        if(imageCaptured==false){
+          if(this.cameraController.value.isStreamingImages){
+            await this.cameraController.stopImageStream();
+            await this.cameraController.dispose();
+
+          }
+          //await Tflite.close();
           changeController.add(new CapturedEvent('captured'));
+
         }
 
-        imageCaptured = true;
         return;
       }
     }

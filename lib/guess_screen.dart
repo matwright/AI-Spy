@@ -72,13 +72,28 @@ class GuessScreen extends StatelessWidget {
 
           return
 
-        Stack(
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          Container
-            (
-              color: Colors.black,
-            child:ImageMatchWidget(spiedModel: state.spiedModel,)),
+          Text(
+            state.spiedModel.word,
+            style    : new TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 40),
+          ),
 
+          Container
+            (alignment: Alignment.topCenter,
+              color: Colors.white,
+            child:ImageMatchWidget(spiedModel: state.spiedModel,)),
+          Text(
+            'Well Done!',
+            style    : new TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 40),
+          ),
 
          ButtonWidget('Play Again', ()=>_navPlayAgain(context))
 
