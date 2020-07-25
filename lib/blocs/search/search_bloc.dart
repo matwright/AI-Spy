@@ -11,10 +11,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   StreamSubscription cameraBlocSubscription;
   CameraController cameraController;
   SpiedModel spiedModel;
-  SearchBloc(this.cameraBloc):super(InitialSearchState()){
+  String player=SearchState.PLAYER_AI;
+  SearchBloc(this.cameraBloc,this.player):super(InitialSearchState(player)){
     cameraBlocSubscription = cameraBloc.listen((state) {
-      // React to state changes here.
-      // Add events here to trigger changes in MyBloc.
       print('***STATE*** '+state.toString());
       if(state is CameraStartedState){
         cameraController=state.controller;
@@ -55,10 +54,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     FlutterTts flutterTts = FlutterTts();
     await flutterTts.speak(clue);
-    yield SearchClueState(spiedModel);
+    yield SearchClueState(spiedModel,player);
   }
 
   Stream<SearchLoadedState> _mapLoadSearchEventtoState() async* {
-    yield SearchLoadedState(cameraController);
+    yield SearchLoadedState(cameraController,player);
   }
 }

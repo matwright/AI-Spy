@@ -1,16 +1,18 @@
-import 'dart:ui';
+import 'dart:typed_data';
 
-import 'package:camera/camera.dart';
-import 'package:flutter/widgets.dart';
+import 'package:hive/hive.dart';
+part 'spied_model.g.dart';
 
+@HiveType(typeId: 0)
 class SpiedModel{
-  CameraImage cameraImage;
+
+  @HiveField(0)
   Map rect;
+  @HiveField(1)
   String word;
+  @HiveField(2)
   var aspectRatio;
-  List<dynamic> finalImage;
-  SpiedModel(this.cameraImage,this.rect,this.word,this.finalImage,this.aspectRatio);
-
-
-
+  @HiveField(3)
+  Uint8List finalImage;
+  SpiedModel(this.rect,this.word,this.finalImage,this.aspectRatio);
 }

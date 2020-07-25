@@ -1,20 +1,21 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ispy/data/spied_model.dart';
 import 'package:tflite/tflite.dart';
 import 'package:image/image.dart' as imglib;
-import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 import './bloc.dart';
 
 class CameraBloc extends Bloc<CameraEvent, CameraState> {
   CameraBloc():super(InitialCameraState()) {
     this.onChange.listen((e) {
       if ((e.eventData) == 'captured' && this.imageCaptured==false) {
-
         this.imageCaptured = true;
         this.add(CameraStoppedEvent());
       }
@@ -27,6 +28,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
   List<CameraDescription> cameras;
   CameraController cameraController;
+  bool moveWarning = false;
   bool isProcessingStream = false;
   bool isProcessingFrame = false;
   bool model = false;
@@ -34,6 +36,9 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   bool imageCaptured = false;
   int i = 0;
   SpiedModel spiedModel;
+  Box spiedBox;
+  List<String> spiedClasses=[];
+  List<String> last50Matches=[];
 
  Future<List> convertYUV420toImage(CameraImage image) async {
 
@@ -71,6 +76,13 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   Stream<CameraState> mapEventToState(
     CameraEvent event,
   ) async* {
+
+   if(null==spiedBox){
+     await Hive.initFlutter();
+     Hive.registerAdapter(SpiedModelAdapter());
+     spiedBox=await Hive.openBox<SpiedModel>('spiedBox');
+   }
+
     if (!model) {
       model = true;
       await Tflite.loadModel(
@@ -108,6 +120,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     CameraImage tmpImg;
     var tmpElement;
     await  Future.forEach(recognitions,(element) async {
+
       print('***HIGHEST***' + element["confidenceInClass"].toString());
       if (element["confidenceInClass"] > tmpHighestRating) {
         tmpHighestRating=element["confidenceInClass"];
@@ -119,8 +132,16 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     highestRating = tmpHighestRating;
     List<dynamic> finalImage= await convertYUV420toImage(tmpImg);
 
-    spiedModel=new SpiedModel(tmpImg, tmpElement["rect"], tmpElement['detectedClass'],finalImage,cameraController.value.aspectRatio);
-
+    SpiedModel tmpSpiedModel=new SpiedModel(tmpElement["rect"], tmpElement['detectedClass'],finalImage,cameraController.value.aspectRatio);
+    last50Matches.add(tmpElement['detectedClass']);
+    if(last50Matches.length>50){
+      last50Matches=last50Matches.sublist(last50Matches.length-50);
+    }
+    if(null==spiedClasses || !spiedClasses.contains(tmpElement['detectedClass'])){
+      print('WRITING TO BOX : '+tmpElement['detectedClass']);
+        await spiedBox.add(tmpSpiedModel);
+        spiedClasses.add(tmpElement['detectedClass']);
+    }
     return;
   }
 
@@ -135,21 +156,28 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
       await cameraController.initialize();
       print('***START STREAM***');
-      await cameraController.startImageStream(processImage);
-
+      await cameraController.startImageStream( processImage);
     }
-
     yield CameraStartedState(cameraController);
   }
 
-  processImage(CameraImage img) async {
+     processImage(CameraImage img) async {
     if (this.imageCaptured == true) {
       return;
     }
 
+    if(moveWarning==false && last50Matches.where((element) => element==last50Matches.last).length==50 ){
+      moveWarning=true;
+      print('MOVE ABOUT!!!!');
+      print(last50Matches);
+      FlutterTts flutterTts = FlutterTts();
+      String text2="Come on, move around a bit.";
+      await flutterTts.speak(text2);
+      await new Future.delayed(const Duration(seconds : 2));
+    }
 
 
-    if (i>10 && isProcessingFrame== false && imageCaptured==false) {
+    if (isProcessingFrame== false && imageCaptured==false) {
       print('***LIST REC***');
       List recognitions = [];
       isProcessingFrame = true;
@@ -179,26 +207,34 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
         return;
     }
 
+
+
       //isProcessingStream=false;
       print('***recognitions***' + recognitions.length.toString());
       if (recognitions.length > 0) {
         print('***MATCH***' + recognitions.length.toString());
 
         await processRecognitions(recognitions, img);
-        print('***imageCaptured***');
 
-        if(imageCaptured==false){
+
+
+
+        if(i>300 && spiedBox.length>0 && imageCaptured==false){
           if(this.cameraController.value.isStreamingImages){
             await this.cameraController.stopImageStream();
             await this.cameraController.dispose();
 
           }
+          var random = new Random();
+          print(spiedClasses.length.toString()+' MATCHES!');
+          print(spiedClasses);
+          spiedModel=spiedBox.getAt(random.nextInt(spiedClasses.length));
           //await Tflite.close();
           changeController.add(new CapturedEvent('captured'));
-
+return;
         }
 
-        return;
+
       }
     }
     i++;

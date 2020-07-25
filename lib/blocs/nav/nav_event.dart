@@ -10,7 +10,8 @@ class NavHomeEvent extends NavEvent{
 }
 
 class NavPlayEvent extends NavEvent{
-  NavPlayEvent();
+  NavPlayEvent(this.player);
+  String player;
 }
 
 class NavGuessEvent extends NavEvent{

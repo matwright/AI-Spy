@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ispy/blocs/guess/bloc.dart';
 import 'package:ispy/blocs/nav/bloc.dart';
+import 'package:ispy/blocs/search/bloc.dart';
 import 'package:ispy/widgets/button_widget.dart';
 import 'package:ispy/widgets/imagematch_widget.dart';
 import 'package:ispy/widgets/spinner_widget.dart';
@@ -14,13 +15,11 @@ class GuessScreen extends StatelessWidget {
 
 
   _navGuessAgain(context)  {
-    print('***redirection***');
     BlocProvider.of<GuessBloc>(context).add(VoiceGuessEvent());
   }
 
   _navPlayAgain(context)  {
-    print('***redirection***');
-    BlocProvider.of<NavBloc>(context).add(NavHomeEvent());
+    BlocProvider.of<NavBloc>(context).add(NavPlayEvent(SearchState.PLAYER_HUMAN));
   }
   @override
   Widget build(BuildContext context) {

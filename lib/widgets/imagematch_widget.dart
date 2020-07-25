@@ -83,11 +83,6 @@ final Color color= Colors.transparent;
 //4
 @override
 void paint(Canvas canvas, Size size) {
-  print(size);
-print(spiedModel.rect);
-  print(spiedModel.cameraImage.width);
-print(spiedModel.cameraImage.height);
-
 
 double src_x=spiedModel.rect["x"]*size.width;
 double src_y=spiedModel.rect["y"]*size.height;

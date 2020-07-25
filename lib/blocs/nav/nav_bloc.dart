@@ -22,7 +22,7 @@ class NavBloc extends Bloc<NavEvent, NavState> {
 
       yield HomeNavState();
     }else if(event is NavPlayEvent){
-      yield PlayNavState();
+      yield PlayNavState(event.player);
     }else if(event is NavGuessEvent){
 
 print('START GUESSING');

@@ -29,10 +29,12 @@ class HomeNavState extends NavState {
 }
 
 class PlayNavState extends NavState {
+  PlayNavState(this.player);
   @override
   List<Object> get props => [];
   final String _name = 'Play';
   final IconData _iconData = null;
+  final String player;
 }
 
 class GuessingNavState extends NavState {

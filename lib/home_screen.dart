@@ -2,9 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ispy/blocs/camera/bloc.dart';
+import 'package:ispy/blocs/challenge/challenge_bloc.dart';
 import 'package:ispy/blocs/guess/bloc.dart';
+import 'package:ispy/blocs/search/bloc.dart';
 import 'package:ispy/blocs/search/search_bloc.dart';
 import 'package:ispy/blocs/nav/bloc.dart';
+import 'package:ispy/challenge_screen.dart';
 import 'package:ispy/guess_screen.dart';
 import 'package:ispy/search_screen.dart';
 
@@ -53,8 +56,7 @@ _body(NavState state,BuildContext context){
 textTheme: ButtonTextTheme.primary,
       child:
         RaisedButton(
-
-            onPressed:   ()=>BlocProvider.of<NavBloc>(context).add(NavPlayEvent()), child: Text('Start Search'))
+            onPressed:   ()=>BlocProvider.of<NavBloc>(context).add(NavPlayEvent(SearchState.PLAYER_AI)), child: Text('Play'))
   )
 
   ],
@@ -63,11 +65,20 @@ textTheme: ButtonTextTheme.primary,
 
 
   }else if(state is PlayNavState){
-    return      BlocProvider<SearchBloc>(
+    if(state.player==SearchState.PLAYER_AI){
+      return      BlocProvider<SearchBloc>(
         create: (context)=>SearchBloc(CameraBloc()
-          ..add(StartCameraEvent())),
-      child: SearchScreen(),
-    );
+          ..add(StartCameraEvent()),state.player),
+        child: SearchScreen(),
+      );
+    }else{
+      //@TODO add human guesser bloc
+      return  BlocProvider<ChallengeBloc>(
+        create: (context)=>ChallengeBloc(),
+        child: ChallengeScreen(),
+      );
+    }
+
   }else if (state is GuessingNavState){
     if(state.spiedModel==null){
       throw Exception('spiedModel is not set [home screen]');
