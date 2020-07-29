@@ -100,7 +100,7 @@ yield *_mapStartVoiceErrorEventToState(event);
 
   Stream<GuessState> _mapStartVoiceGuessEventToState(VoiceGuessEvent event) async* {
     if(numTries==0){
-      String clue="OK, tell me your answer after the bleep.";
+      String clue="OK, tell me your answer.";
       FlutterTts flutterTts = FlutterTts();
       await flutterTts.speak(clue);
       await new Future.delayed(const Duration(seconds : 3));

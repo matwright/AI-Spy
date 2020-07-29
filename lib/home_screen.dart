@@ -56,7 +56,7 @@ _body(NavState state,BuildContext context){
 textTheme: ButtonTextTheme.primary,
       child:
         RaisedButton(
-            onPressed:   ()=>BlocProvider.of<NavBloc>(context).add(NavPlayEvent(SearchState.PLAYER_AI)), child: Text('Play'))
+            onPressed:   ()=>BlocProvider.of<NavBloc>(context).add(NavPlayEvent(SearchState.PLAYER_HUMAN)), child: Text('Play'))
   )
 
   ],
@@ -74,7 +74,7 @@ textTheme: ButtonTextTheme.primary,
     }else{
       //@TODO add human guesser bloc
       return  BlocProvider<ChallengeBloc>(
-        create: (context)=>ChallengeBloc(),
+        create: (context)=>ChallengeBloc()..add(PromptHumanEvent()),
         child: ChallengeScreen(),
       );
     }

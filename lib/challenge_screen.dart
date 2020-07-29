@@ -8,7 +8,15 @@ class ChallengeScreen extends StatelessWidget {
     return BlocBuilder<ChallengeBloc, ChallengeState>(
 
         builder: (context, state) {
-          return Text('challenge');
+          print(state);
+          if(state is HumanPromptedState){
+            return Text(state.humanClue??'');
+          }else if(state is ChallengeStartedState){
+            return Text((state.humanClue.substring(state.humanClue.length-1)??''),style: TextStyle(fontSize: 100),);
+          }else{
+            return Text('challenge');
+          }
+
         }
     );
   }
