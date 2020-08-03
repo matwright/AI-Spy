@@ -1,45 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:ispy/bloc_delegate.dart';
 import 'package:ispy/blocs/camera/bloc.dart';
 import 'package:ispy/blocs/search/search_bloc.dart';
 import 'package:ispy/blocs/search/search_state.dart';
 import 'package:ispy/blocs/nav/bloc.dart';
+import 'package:ispy/blocs/sensors/sensors_bloc.dart';
+import 'package:ispy/data/spied_model.dart';
 import 'package:ispy/home_screen.dart';
 import 'package:ispy/localization.dart';
-import 'package:ispy/theme.dart';
-
+import 'package:ispy/dark-theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = MyBlocDelegate();
-
+  Hive.registerAdapter(SpiedModelAdapter());
   runApp(
     BlocProvider(
       //AI is default player
-      create: (context) => SearchBloc(CameraBloc(),SearchState.PLAYER_AI)
-  ,
+      create: (context) => SearchBloc(CameraBloc(), SearchState.PLAYER_AI),
       child: App(),
     ),
   );
 }
+
 class App extends StatelessWidget {
-
-
-  App({Key key})
-      :
-        super(key: key);
+  App({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+        ),
 
-        themeMode: ThemeMode.light,
-        theme: theme,
+        theme: darkTheme,
         locale: Locale('en'),
-        onGenerateTitle: (BuildContext context) =>'welcome',
-
+        onGenerateTitle: (BuildContext context) => 'welcome',
         supportedLocales: [
           const Locale('en'), // English
           const Locale('fr'), // French
@@ -47,12 +47,10 @@ class App extends StatelessWidget {
         ],
         home: BlocBuilder<SearchBloc, SearchState>(
           builder: (context, state) {
-            return BlocProvider(create: (context)=>NavBloc(),child: HomeScreen(name:'friend'));
+            return BlocProvider(
+                create: (context) => NavBloc(),
+                child: HomeScreen(name: 'friend'));
           },
-
-        )
-    );
+        ));
   }
 }
-
-

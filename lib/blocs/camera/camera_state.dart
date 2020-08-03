@@ -6,14 +6,15 @@ import 'package:meta/meta.dart';
 abstract class CameraState {}
 
 class InitialCameraState extends CameraState {}
+
 class CameraStartedState extends CameraState {
   CameraController controller;
   CameraStartedState(this.controller);
 }
-class ImageCapturedState extends CameraState {
 
-final SpiedModel spiedModel;
-ImageCapturedState(this.spiedModel);
+class ImageCapturedState extends CameraState {
+  final SpiedModel spiedModel;
+  ImageCapturedState(this.spiedModel);
   @override
   List<Object> get props => [];
 }

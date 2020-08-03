@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ispy/data/spied_model.dart';
 
-
 abstract class NavState extends Equatable {
   NavState();
   IconData _iconData;
@@ -45,5 +44,3 @@ class GuessingNavState extends NavState {
   SpiedModel spiedModel;
   GuessingNavState(this.spiedModel);
 }
-
-

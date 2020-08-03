@@ -17,20 +17,18 @@ class FlutterBlocLocalizations {
     'en': {
       'title': 'Parent App',
       'welcome': 'Welcome',
-      'add contact':'Add Contact'
+      'add contact': 'Add Contact'
     },
     'fr': {
       'title': 'Parent',
       'welcome': 'Bienvenue',
-      'add contact':'Ajouter Contact'
+      'add contact': 'Ajouter Contact'
     },
   };
 
-  String  translate(String value)  {
-
-    return _localizedValues[locale.languageCode][value]??value;
+  String translate(String value) {
+    return _localizedValues[locale.languageCode][value] ?? value;
   }
-
 }
 
 class FlutterBlocLocalizationsDelegate
@@ -38,12 +36,13 @@ class FlutterBlocLocalizationsDelegate
   const FlutterBlocLocalizationsDelegate();
   @override
   Future<FlutterBlocLocalizations> load(Locale locale) =>
-      SynchronousFuture<FlutterBlocLocalizations>(FlutterBlocLocalizations(locale));
+      SynchronousFuture<FlutterBlocLocalizations>(
+          FlutterBlocLocalizations(locale));
 
   @override
   bool shouldReload(FlutterBlocLocalizationsDelegate old) => false;
 
   @override
-  bool isSupported(Locale locale) =>["en","fr"].contains(locale.languageCode.toLowerCase());
-
+  bool isSupported(Locale locale) =>
+      ["en", "fr"].contains(locale.languageCode.toLowerCase());
 }

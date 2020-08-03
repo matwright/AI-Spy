@@ -8,14 +8,14 @@ class SnackbarWidget extends StatelessWidget {
 
   SnackbarWidget({
     @required this.body,
-    this.subject='',
-    this.icon=Icons.check,
+    this.subject = '',
+    this.icon = Icons.check,
     Key key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width*0.8;
+    double width = MediaQuery.of(context).size.width * 0.8;
     return SnackBar(
       content: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -23,21 +23,22 @@ class SnackbarWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16.0),
             width: width,
-            child:
-            Text.rich(
+            child: Text.rich(TextSpan(
+              style: TextStyle(fontWeight: FontWeight.bold),
+              text: subject != '' ? subject + '\n' : subject,
+              children: <TextSpan>[
                 TextSpan(
-
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                  text: subject!=''?subject+'\n':subject,
-                  children: <TextSpan>[
-                    TextSpan(text:body,  style: TextStyle(fontWeight: FontWeight.normal,),)
-                  ],
-                )),
-          )
-          ,Icon(icon)],
-
+                  text: body,
+                  style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                  ),
+                )
+              ],
+            )),
+          ),
+          Icon(icon)
+        ],
       ),
-
     );
   }
 }

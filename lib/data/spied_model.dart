@@ -4,8 +4,7 @@ import 'package:hive/hive.dart';
 part 'spied_model.g.dart';
 
 @HiveType(typeId: 0)
-class SpiedModel{
-
+class SpiedModel {
   @HiveField(0)
   Map rect;
   @HiveField(1)
@@ -14,5 +13,5 @@ class SpiedModel{
   var aspectRatio;
   @HiveField(3)
   Uint8List finalImage;
-  SpiedModel(this.rect,this.word,this.finalImage,this.aspectRatio);
+  SpiedModel(this.rect, this.word, this.finalImage, this.aspectRatio);
 }

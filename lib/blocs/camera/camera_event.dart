@@ -3,19 +3,20 @@ import 'package:meta/meta.dart';
 
 @immutable
 abstract class CameraEvent {}
-class StartCameraEvent extends CameraEvent{
+
+class StartCameraEvent extends CameraEvent {
   @override
   StartCameraEvent();
 }
 
-
-class CaptureImageEvent extends CameraEvent{
+class CaptureImageEvent extends CameraEvent {
   @override
   List<Object> get props => [];
-  CameraImage  cameraImage;
+  CameraImage cameraImage;
   CaptureImageEvent(this.cameraImage);
 }
-class CameraStoppedEvent extends CameraEvent{
+
+class CameraStoppedEvent extends CameraEvent {
   @override
   List<Object> get props => [];
 
