@@ -1,3 +1,4 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -8,10 +9,18 @@ import 'package:ispy/widgets/contained_text.dart';
 
 class ConfirmLetterWidget extends StatelessWidget {
   _startGuessing(context) {
+    AssetsAudioPlayer.newPlayer().open(
+      Audio("assets/beep.mp3"),
+      showNotification: true,
+    );
     BlocProvider.of<ChallengeBloc>(context).add(StartGuessingEvent());
   }
 
   _startAgain(context) {
+    AssetsAudioPlayer.newPlayer().open(
+      Audio("assets/beep.mp3"),
+      showNotification: true,
+    );
     BlocProvider.of<ChallengeBloc>(context).add(PromptHumanEvent());
   }
 

@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:ispy/blocs/challenge/challenge_bloc.dart';
+import 'package:ispy/blocs/nav/bloc.dart';
+import 'package:ispy/blocs/search/bloc.dart';
 import 'package:ispy/theme.dart';
+import 'package:ispy/widgets/button_widget.dart';
 import 'package:ispy/widgets/contained_text.dart';
 import 'package:ispy/widgets/imagematch_widget.dart';
 
-class ConfirmGuessWidget extends StatelessWidget {
-  _startGuessing(context) {
-    BlocProvider.of<ChallengeBloc>(context).add(StartGuessingEvent());
-  }
+class ConfirmAIWinWidget extends StatelessWidget {
 
-  _aiWins(context) {
-    BlocProvider.of<ChallengeBloc>(context).add(AIWinsEvent());
+
+  _playAI(context){
+    BlocProvider.of<NavBloc>(context)
+        .add(NavHomeEvent());
   }
 
   @override
@@ -21,10 +23,9 @@ class ConfirmGuessWidget extends StatelessWidget {
         listener: (context, state) {
       // do stuff here based on BlocA's state
     }, builder: (context, state) {
-      if (state is GuessState) {
+      if (state is AIWinsState) {
         return Center(
             child: Column(
-
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ContainedText(state.spiedModel.word),
@@ -33,24 +34,8 @@ class ConfirmGuessWidget extends StatelessWidget {
               child:    ImageMatchWidget(spiedModel: state.spiedModel),
             )
          ,
-            ContainedText('Did I guess correctly?'),
-            Wrap(
-              spacing: 50,
-              children: [
-                IconButton(
-                  onPressed: () => _aiWins(context),
-                  iconSize: 100,
-                  icon: Icon(MaterialCommunityIcons.thumb_up_outline),
-                  color: theme.colorScheme.primaryVariant,
-                ),
-                IconButton(
-                  onPressed: () => _startGuessing(context),
-                  iconSize: 100,
-                  icon: Icon(MaterialCommunityIcons.thumb_down_outline),
-                  color: theme.colorScheme.error,
-                ),
-              ],
-            )
+            ContainedText('A.I. Wins'),
+            ButtonWidget(MaterialCommunityIcons.eye_circle_outline, 'OK', ()=>_playAI(context)),
           ],
         ));
       } else {

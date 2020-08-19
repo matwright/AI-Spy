@@ -108,11 +108,11 @@ class SensorsBloc extends Bloc<SensorsEvent, SensorsState> {
     int i=0;
     while (started == true) {
       print('yielding');
-      await new Future.delayed(const Duration(milliseconds: 100));
+
       i++;
 print('max: '+maxMovement.toString());
       if(i%100==0){
-        if(maxMovement<2){
+        if(maxMovement<1){
           print('MOVE ABOUT!!!!');
           FlutterTts flutterTts = FlutterTts();
           String text2 = "Come on, move around a bit.";
@@ -120,7 +120,7 @@ print('max: '+maxMovement.toString());
         }
         maxMovement=0;
       }
-
+      await new Future.delayed(const Duration(milliseconds: 100));
 
       yield SensorsStartedState(
           accelerometer, userAccelerometer, gyroscope);

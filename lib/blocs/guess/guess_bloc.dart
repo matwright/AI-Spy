@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:ispy/blocs/camera/bloc.dart';
@@ -54,8 +55,13 @@ class GuessBloc extends Bloc<GuessEvent, GuessState> {
       String clue;
       print('***GUESS*** ' + guessWord);
       print('***SPIED*** ' + spiedModel.word);
+
       if (guessWord.toLowerCase().replaceAll(' ', '') ==
           spiedModel.word.toLowerCase().replaceAll(' ', '')) {
+        AssetsAudioPlayer.newPlayer().open(
+          Audio("assets/human_wins.mp3"),
+          showNotification: true,
+        );
         clue = "Hurray! Well done. You guessed correctly! Human wins";
         flutterTts.speak(clue);
         yield GameOverState(true, spiedModel, numTries);
@@ -76,20 +82,18 @@ class GuessBloc extends Bloc<GuessEvent, GuessState> {
         yield VoiceProcessedState(guessWord, spiedModel, numTries);
       }
     } else if (event is VoiceErrorEvent) {
-      yield* _mapStartVoiceErrorEventToState(event);
+      String clue = "Sorry, I did not understand. Please try again.";
+      FlutterTts flutterTts = FlutterTts();
+      await flutterTts.speak(clue);
+      yield VoiceProcessedState(guessWord, spiedModel, numTries);
     }
   }
 
-  Stream<GuessState> _mapStartVoiceErrorEventToState(
-      VoiceErrorEvent event) async* {
-    String clue = "Sorry, I did not understand. Please try again.";
-    FlutterTts flutterTts = FlutterTts();
-    await flutterTts.speak(clue);
-    yield VoiceProcessedState(guessWord, spiedModel, numTries);
-  }
 
   Stream<GuessState> _mapStartVoiceGuessEventToState(
       VoiceGuessEvent event) async* {
+    await new Future.delayed(const Duration(seconds: 2));
+
     if (numTries == 0) {
       String clue = "OK, tell me your answer.";
       FlutterTts flutterTts = FlutterTts();

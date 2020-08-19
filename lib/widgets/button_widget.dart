@@ -35,11 +35,12 @@ class ButtonWidget extends StatelessWidget {
 
                     color: backgroundColor,
 icon: Icon(icon,size: 30,    color:color ,),
-                        label: Text(label,style:
+                        label: Text(label.toUpperCase(),style:
                     TextStyle(
                       color:color ,
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
-                      fontFamily: "Cinzel",),)))));
+
+                     ),)))));
   }
 }

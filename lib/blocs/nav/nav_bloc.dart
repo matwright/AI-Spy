@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -14,8 +15,16 @@ class NavBloc extends Bloc<NavEvent, NavState> {
     NavEvent event,
   ) async* {
     if (event is NavHomeEvent) {
+      await AssetsAudioPlayer.newPlayer().open(
+        Audio("assets/beep.mp3"),
+        showNotification: true,
+      );
       yield HomeNavState();
     } else if (event is NavPlayEvent) {
+      await AssetsAudioPlayer.newPlayer().open(
+        Audio("assets/beep.mp3"),
+        showNotification: true,
+      );
       yield PlayNavState(event.player);
     } else if (event is NavGuessEvent) {
       print('START GUESSING');

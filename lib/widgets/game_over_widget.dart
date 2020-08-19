@@ -8,7 +8,8 @@ import 'package:ispy/widgets/imagematch_widget.dart';
 class GameOverWidget extends StatelessWidget {
   SpiedModel spiedModel;
   Function onClick;
-  GameOverWidget(this.spiedModel,this.onClick);
+  bool success;
+  GameOverWidget(this.spiedModel,this.onClick,this.success);
   @override
   Widget build(BuildContext context) {
     return
@@ -16,7 +17,7 @@ class GameOverWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        ContainedText(  'Well Done!'),
+        ContainedText(  (success==false?'Sorry! \nThe correct answer is:':'Well Done! \n You guessed correctly')),
         ContainedText(   spiedModel.word),
         Container(
             alignment: Alignment.topCenter,

@@ -1,3 +1,4 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,14 +8,19 @@ import 'package:ispy/blocs/camera/bloc.dart';
 import 'package:ispy/blocs/search/search_bloc.dart';
 import 'package:ispy/blocs/search/search_state.dart';
 import 'package:ispy/blocs/nav/bloc.dart';
-import 'package:ispy/blocs/sensors/sensors_bloc.dart';
 import 'package:ispy/data/spied_model.dart';
 import 'package:ispy/home_screen.dart';
-import 'package:ispy/localization.dart';
 import 'package:ispy/dark-theme.dart';
 
+
 void main() {
+  AssetsAudioPlayer.setupNotificationsOpenAction((notification) {
+    print(notification.audioId);
+    return true;
+  });
+
   WidgetsFlutterBinding.ensureInitialized();
+
   Bloc.observer = MyBlocDelegate();
   Hive.registerAdapter(SpiedModelAdapter());
   runApp(

@@ -19,17 +19,25 @@ class ImageMatchWidget extends StatelessWidget {
 
     return new Container(
 
+
         child:
-          Stack(alignment: FractionalOffset.center, children: <Widget>[
+          Stack(
+
+              alignment: FractionalOffset.center, children: <Widget>[
             RotatedBox(
               quarterTurns: 1,
               child: new AspectRatio(
                   key: _keyCameraPreview,
                   aspectRatio: 1,
-                  child: Image(
+                  child:
+                  ClipRRect(
+                      borderRadius: BorderRadius.circular(25.0),
+                      child:
+                  Image(
+
                     image: MemoryImage(spiedModel.finalImage),
-                    fit: BoxFit.fitHeight,
-                  )),
+                    fit: BoxFit.contain,
+                  ))),
             ),
             Positioned.fill(
                 child: new CustomPaint(

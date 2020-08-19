@@ -19,6 +19,10 @@ class StartGuessingEvent extends ChallengeEvent {
   StartGuessingEvent();
 }
 
+class AIWinsEvent extends ChallengeEvent {
+  AIWinsEvent();
+}
+
 class TimeOutEvent extends ChallengeEvent {
   TimeOutEvent();
 }
@@ -30,4 +34,8 @@ class StartObjectCaptureEvent extends ChallengeEvent {
 
 class ObjectCapturedEvent extends ChallengeEvent {
   ObjectCapturedEvent();
+}
+
+class TakePictureEvent extends ChallengeEvent {
+  TakePictureEvent();
 }

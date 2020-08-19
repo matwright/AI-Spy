@@ -6,7 +6,8 @@ class ContainedText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return   Container(
-        padding: EdgeInsets.all(10),
+      width:  double.infinity,
+        padding: EdgeInsets.fromLTRB(0,0,0,10),
         decoration:BoxDecoration(
           color: Colors.black54,
 
@@ -15,8 +16,10 @@ class ContainedText extends StatelessWidget {
         child: Text(
          text,
           style: TextStyle(
-            fontFamily: "Cinzel",
+            height:0.8,
+            fontFamily: "Digital",
             fontWeight: FontWeight.bold,
+
             fontSize: 32,
           ),
           textAlign: TextAlign.center,

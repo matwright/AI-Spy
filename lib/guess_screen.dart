@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -15,10 +16,20 @@ import 'package:ispy/widgets/spinner_widget.dart';
 
 class GuessScreen extends StatelessWidget {
   _navGuessAgain(context) {
+    AssetsAudioPlayer.newPlayer().open(
+        Audio("assets/beep.mp3"
+            ,metas: Metas(  id:'intro')
+        )
+    );
     BlocProvider.of<GuessBloc>(context).add(VoiceGuessEvent());
   }
 
   _navPlayAgain(context) {
+    AssetsAudioPlayer.newPlayer().open(
+        Audio("assets/beep.mp3"
+            ,metas: Metas(  id:'intro')
+        )
+    );
     BlocProvider.of<NavBloc>(context).add(NavPlayEvent(SearchState.PLAYER_HUMAN));
   }
 
@@ -34,7 +45,7 @@ class GuessScreen extends StatelessWidget {
           return GuessWidget(label:'Have Another Go',onClick:()=>_navGuessAgain(context));
 
         } else if (state is GameOverState) {
-          return GameOverWidget(state.spiedModel,()=>_navPlayAgain(context));
+          return GameOverWidget(state.spiedModel,()=>_navPlayAgain(context),state.success);
         } else  if (state is VoiceGuessState) {
           return
             SizedBox.expand(

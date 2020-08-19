@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
@@ -92,6 +93,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
           );
     }
     if (event is StartCameraEvent) {
+
+
       FlutterTts flutterTts = FlutterTts();
 
       print('voices');
@@ -104,7 +107,10 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
 
       String text2 = "Please allow me to scan our environment";
       await flutterTts.speak(text2);
-
+      AssetsAudioPlayer.newPlayer().open(
+        Audio("assets/scanning.mp3"),
+        showNotification: true,
+      );
       yield* _mapStartCameraEventToState();
     } else if (event is CameraStoppedEvent) {
       yield ImageCapturedState(spiedModel);

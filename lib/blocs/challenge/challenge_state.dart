@@ -23,7 +23,11 @@ class GuessState extends ChallengeState {
 class GuessingState extends ChallengeState {
   GuessingState();
 }
-
+class AIWinsState extends ChallengeState {
+  String humanClue;
+  SpiedModel spiedModel;
+  AIWinsState(this.humanClue, this.spiedModel);
+}
 class GiveUpState extends ChallengeState {
   String humanClue;
 
@@ -38,5 +42,10 @@ class ObjectCaptureState extends ChallengeState {
 
 class ObjectCapturedState extends ChallengeState {
   String humanClue;
-  ObjectCapturedState(this.humanClue);
+  File file;
+  ObjectCapturedState(this.humanClue,this.file);
+}
+
+class ObjectCaptureSavedState extends ChallengeState {
+  ObjectCaptureSavedState();
 }

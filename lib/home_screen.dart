@@ -1,3 +1,4 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,7 +25,7 @@ class HomeScreen extends StatelessWidget {
     return BlocBuilder<NavBloc, NavState>(builder: (_, state) {
       return Scaffold(
           appBar: AppBar(
-            title: Text('iSpy v1.0.beta',
+            title: Text('aISpy v1.0.beta',
               textAlign: TextAlign.center,
               style: TextStyle(
 
@@ -54,11 +55,22 @@ class HomeScreen extends StatelessWidget {
 
 _playAI(context){
   BlocProvider.of<NavBloc>(context)
-      .add(NavPlayEvent(SearchState.PLAYER_AI));
+      .add(NavPlayEvent(SearchState.PLAYER_HUMAN));
 }
 
 _body(NavState state, BuildContext context) {
   if (state is InitialNavState || state is HomeNavState) {
+
+    AssetsAudioPlayer.newPlayer().open(
+      Audio("assets/intro.mp3"
+      ,metas: Metas(  id:'intro')
+      ),
+      autoStart: true,
+      showNotification: true,
+
+playInBackground: PlayInBackground.disabledPause
+    );
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
@@ -89,7 +101,7 @@ _body(NavState state, BuildContext context) {
         child: SearchScreen(),
       );
     } else {
-      //@TODO add human guesser bloc
+
       return BlocProvider<ChallengeBloc>(
         create: (context) => ChallengeBloc()..add(PromptHumanEvent()),
         child: ChallengeScreen(),

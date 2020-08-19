@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -50,6 +51,15 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   Stream<SearchClueState> _mapImageSelectedEventToState(
       ImageSelectedEvent event) async* {
+    AssetsAudioPlayer.newPlayer().open(
+        Audio("assets/capture.mp3"
+            ,metas: Metas(  id:'intro')
+        ),
+        autoStart: true,
+        showNotification: true,
+
+        playInBackground: PlayInBackground.disabledPause
+    );
     await new Future.delayed(const Duration(seconds: 1));
     print("***SearchClueState***");
     print(spiedModel.word.toString());
