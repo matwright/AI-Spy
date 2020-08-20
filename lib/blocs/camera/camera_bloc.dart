@@ -190,7 +190,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
             imageStd: 255.0,
             numResultsPerClass: 1,
             asynch: true,
-            threshold: 0.8);
+            threshold: 0.7);
 
         isProcessingFrame = false;
       } on PlatformException catch (e) {
