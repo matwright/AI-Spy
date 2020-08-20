@@ -1,6 +1,7 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:ispy/bloc_delegate.dart';
@@ -23,13 +24,17 @@ void main() {
 
   Bloc.observer = MyBlocDelegate();
   Hive.registerAdapter(SpiedModelAdapter());
-  runApp(
-    BlocProvider(
-      //AI is default player
-      create: (context) => SearchBloc(CameraBloc(), SearchState.PLAYER_AI),
-      child: App(),
-    ),
-  );
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(
+      BlocProvider(
+        //AI is default player
+        create: (context) => SearchBloc(CameraBloc(), SearchState.PLAYER_AI),
+        child: App(),
+      ),
+    );
+  });
+
 }
 
 class App extends StatelessWidget {

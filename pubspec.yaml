@@ -41,7 +41,7 @@ dependencies:
   image: ^2.1.14
   flutter_native_image: ^0.0.5+2
   tflite_flutter_helper: ^0.1.1
-
+  video_player: ^0.10.12
   hive: ^1.4.2
   hive_flutter: ^0.3.1
   circular_countdown_timer: ^0.0.4
