@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "1071381868483",
-    "firebase_url": "https://ispy-283923.firebaseio.com",
-    "project_id": "ispy-283923",
-    "storage_bucket": "ispy-283923.appspot.com"
+    "project_number": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "firebase_url": "https://ispy-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.firebaseio.com",
+    "project_id": "ispy-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "storage_bucket": "ispy-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1071381868483:android:2021620e67a87c1b2fd776",
+        "mobilesdk_app_id": "1:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx:android:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
         "android_client_info": {
           "package_name": "dev.matwright.ispy"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1071381868483-5pmarstpknapvk5hnhqb7095fhi4uir0.apps.googleusercontent.com",
+          "client_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyALuOgA48rIa1EDeLoG8ksBP3Wam09l7Sw"
+          "current_key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1071381868483-5pmarstpknapvk5hnhqb7095fhi4uir0.apps.googleusercontent.com",
+              "client_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
