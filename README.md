@@ -12,7 +12,7 @@ The app protoype uses a fairly limited model with just under a hundred recognisa
 To help improve the number of recognisable objects, the app asks the user to share photographs of objects it could not guess during the game.
 
 ### Video
-[![AI Spy Video](https://img.youtube.com/vi/auUA2qMu_9w/0.jpg)](https://youtu.be/auUA2qMu_9w)
+[![AI Spy Video](https://img.youtube.com/vi/0GX9b0yBPfg/0.jpg)](https://youtu.be/0GX9b0yBPfg)
 
 ## Further Info
 
